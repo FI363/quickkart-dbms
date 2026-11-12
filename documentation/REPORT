@@ -1,0 +1,128 @@
+Chapter 3 – SQL Queries and Database Operations
+3.1 Adding Constraints and Queries Based on Constraints
+
+3.2 Queries Based on Aggregate Functions
+- Average
+- Count
+- Variance
+- Standard Deviation
+- Other Aggregate Operations
+3.3 Complex Queries Based on Set Operations
+- Union
+- Intersection
+- Set Difference
+3.4 Complex Queries Based on Subqueries
+- Nested Queries
+- IN and NOT IN
+- Comparison with Aggregate Results
+3.5 Complex Queries Based on Joins
+- Inner Join
+- Left Join
+- Other Join Operations
+3.6 Complex Queries Based on Views
+- View Creation
+- View Retrieval
+3.7 Complex Queries Based on Triggers
+- Trigger Creation
+- Trigger Execution
+- Output Verification
+3.8 Complex Queries Based on Cursors
+- Cursor Declaration
+- Cursor Execution
+- Stored Procedure Implementation
+For every query, maintain the following format:
+- Question
+- SQL Statement
+- Output
+- Screenshot / Figure
+
+Chapter 4 – Functional Dependencies and Database Normalization
+4.1 Analysis of Pitfalls in Relations
+- Atomicity Issues
+- Redundancy
+- Update Anomalies
+- Insertion Anomalies
+- Deletion Anomalies
+4.2 First Normal Form (1NF)
+- 4.2.1 Identification of Dependencies
+- 4.2.2 Application of Normalization to 1NF
+4.3 Second Normal Form (2NF)
+- 4.3.1 Identification of Dependencies
+- 4.3.2 Application of Normalization to 2NF
+4.4 Third Normal Form (3NF)
+- 4.4.1 Identification of Dependencies
+- 4.4.2 Application of Normalization to 3NF
+4.5 Boyce-Codd Normal Form (BCNF)
+- 4.5.1 Identification of Dependencies
+- 4.5.2 Application of Normalization to BCNF
+4.6 Fourth Normal Form (4NF)
+- 4.6.1 Identification of Dependencies
+- 4.6.2 Application of Normalization to 4NF
+4.7 Fifth Normal Form (5NF)
+- 4.7.1 Identification of Dependencies
+- 4.7.2 Application of Normalization to 5NF
+
+Chapter 5 – Transaction Management, Concurrency Control and Recovery
+5.1 Introduction to Transactions
+- 5.1.1 ACID Properties
+  - Atomicity
+  - Consistency
+  - Isolation
+  - Durability
+- 5.1.2 Transaction States
+5.2 Transaction Control Language (TCL)
+- Savepoint
+- COMMIT
+- ROLLBACK
+5.3 Implementation of Transactions
+- Transaction 1
+- Transaction 2
+- Transaction 3
+- Transaction 4
+- Transaction 5
+- Execution and Output
+5.4 Concurrency Control
+- Concurrency Control Mechanisms
+- Locking Commands
+- Row-Level Locking
+- Table-Level Locking
+- Lock Release and Verification
+
+Chapter 6 – Front-End and Back-End Implementation
+6.1 Front-End Module and Code
+- User Interface Implementation
+- Front-End Components
+- Screens and Functional Modules
+6.2 Back-End Implementation
+- Backend Logic
+- Core Functionalities
+- Data Processing
+6.3 Database Connectivity
+- Database Connection Configuration
+- Data Ingestion
+- Data Retrieval
+- Integration Between Front-End and Back-End
+
+Chapter 7 – Results and Discussion
+7.1 Screenshots of Front-End
+- Login Page
+- Dashboard
+- Main Interface
+- Functional Modules
+7.2 Screenshots of Database
+- Database Structure
+- Tables
+- Query Execution Results
+7.3 Results and Observations (recommended addition)
+
+7.4 Discussion of Outcomes (recommended addition)
+
+Final Pages
+The supplied report ends after Chapter 7 and does not contain dedicated sections for these, but I recommend including them in a complete report:
+1. Conclusion
+2. Future Scope
+3. References
+4. Appendices
+   - Appendix A – Source Code
+   - Appendix B – Additional Screenshots
+   - Appendix C – Supporting Documentation

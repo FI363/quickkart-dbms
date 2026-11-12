@@ -1,0 +1,716 @@
+# Quick-Commerce Management System — DBMS Project Blueprint
+
+
+
+Advanced scope
+
+Individual project
+
+
+
+We're going to build a full-stack quick-commerce platform inspired by Blinkit and Zepto, using React, Node.js, Express and MySQL 8.
+
+Since this is an individual project, we'll make the architecture sophisticated enough to demonstrate advanced DBMS concepts without creating unnecessary infrastructure that would take months to implement.
+
+The central focus will be a properly normalized relational database, with a functional application built around it.
+
+[Grocery Management & Delivery Dashboard UI Design :: Behance](https://images.openai.com/static-rsc-4/gNxwYg0KMuV3eqo5iirtzBXsekyu5N6RMBHHFYzk4HfLR5E5pUo79Pf96ZXNuDwHu0zW71PZO8qO6fMGnQXR07WHE6oiwFoczLUT-Rf7ex8FQrwBv72N_Hl5OUlCkmCDTBWiNrscezsrOYiLg48i14MRLucjAqgnXIBTEAxoZm0?purpose=inline)
+
+[behance.net](https://www.behance.net/gallery/208396775/Grocery-Management-Delivery-Dashboard-UI-Design?utm_source=chatgpt.com)
+
+## 1. Project definition
+
+Project name: QuickKart — Quick-Commerce Management System
+
+Objective: Design and implement a database-driven quick-commerce platform that manages multiple dark stores, product catalogues, store-specific inventory, orders, payments and last-mile deliveries.
+
+### Core functionality
+
+| Module         | Functionality                             |
+| -------------- | ----------------------------------------- |
+| Authentication | Registration, login, role-based access    |
+| Customer       | Addresses, product browsing, cart         |
+| Product        | Categories, brands, variants, pricing     |
+| Store          | Multiple dark stores and service areas    |
+| Inventory      | Stock management, reservations, transfers |
+| Orders         | Checkout, order history, cancellation     |
+| Payments       | Payment simulation and refunds            |
+| Delivery       | Partner assignment and tracking           |
+| Analytics      | Sales, inventory and delivery reports     |
+
+## 2. Overall technical architecture
+
+[React, Node.js Express, MySQL Architecture](https://images.openai.com/static-rsc-4/hvBJ19owPJe-diZJoU5IsDBDNvZT9Lv8Ta4wwT-anR8pfL4Md7lO_OmV3CNwHlIPCPoloqO7xq7bHu5G4KVIZ6g4OzEDsPdIPJM-jW-WmuhAQgA4bxme-TJSZMt2pNQ6zypGEf7SQ5AWB586Rraxf4Z6vBIackHEWxT0Wu09UjU?purpose=inline)
+
+[jsxcode.com](https://jsxcode.com/React-Node.js-Express-MySQL-Architecture.html?utm_source=chatgpt.com)
+
+Our implementation will have three layers:
+
+```
+┌────────────────────────────────────────────┐
+│             PRESENTATION LAYER             │
+│                                            │
+│             React + Tailwind CSS           │
+│                                            │
+│  Customer Dashboard | Admin | Delivery     │
+└──────────────────────┬─────────────────────┘
+                       │ REST API
+                       ▼
+┌────────────────────────────────────────────┐
+│              APPLICATION LAYER             │
+│                                            │
+│              Node.js + Express             │
+│                                            │
+│ Authentication | Product | Cart            │
+│ Inventory | Order | Payment | Delivery     │
+└──────────────────────┬─────────────────────┘
+                       │ SQL
+                       ▼
+┌────────────────────────────────────────────┐
+│                DATA LAYER                   │
+│                                            │
+│                  MySQL 8                   │
+│                                            │
+│ Tables | Views | Triggers | Procedures     │
+│ Transactions | Indexes | Constraints       │
+└────────────────────────────────────────────┘
+```
+
+We'll use a modular monolith rather than microservices. This is easier to develop and maintain individually, while keeping the database design ready for future expansion.
+
+# 3. Database architecture and ER design
+
+I recommend designing the database around these eight logical domains:
+
+1. Identity and access management.
+2. Customer and address management.
+3. Product catalogue.
+4. Dark store management.
+5. Inventory management.
+6. Shopping cart and order management.
+7. Payment and refund management.
+8. Delivery management.
+
+We will use approximately 24–26 tables. That's substantial enough for an advanced DBMS project, but still manageable.
+
+## 3.1 Entity Relationship Diagram (ERD)
+
+Here is the proposed database relationship structure. This is the logical ERD that we will use as the foundation for the SQL schema.
+
+\#chatgpt-mermaid-\_r_op\_{font-family:-apple-system-body,ui-sans-serif,-apple-system,system-ui,"Segoe UI",Helvetica,"Apple Color Emoji",Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";font-size:16px;fill:rgb(13, 13, 13);}@keyframes edge-animation-frame{from{stroke-dashoffset:0;}}@keyframes dash{to{stroke-dashoffset:0;}}#chatgpt-mermaid-\_r_op\_ .edge-animation-slow{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 50s linear infinite;stroke-linecap:round;}#chatgpt-mermaid-\_r_op\_ .edge-animation-fast{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 20s linear infinite;stroke-linecap:round;}#chatgpt-mermaid-\_r_op\_ .error-icon{fill:rgb(243, 243, 243);}#chatgpt-mermaid-\_r_op\_ .error-text{fill:rgb(13, 13, 13);stroke:rgb(13, 13, 13);}#chatgpt-mermaid-\_r_op\_ .edge-thickness-normal{stroke-width:1px;}#chatgpt-mermaid-\_r_op\_ .edge-thickness-thick{stroke-width:3.5px;}#chatgpt-mermaid-\_r_op\_ .edge-pattern-solid{stroke-dasharray:0;}#chatgpt-mermaid-\_r_op\_ .edge-thickness-invisible{stroke-width:0;fill:none;}#chatgpt-mermaid-\_r_op\_ .edge-pattern-dashed{stroke-dasharray:3;}#chatgpt-mermaid-\_r_op\_ .edge-pattern-dotted{stroke-dasharray:2;}#chatgpt-mermaid-\_r_op\_ .marker{fill:rgb(143, 143, 143);stroke:rgb(143, 143, 143);}#chatgpt-mermaid-\_r_op\_ .marker.cross{stroke:rgb(143, 143, 143);}#chatgpt-mermaid-\_r_op\_ svg{font-family:-apple-system-body,ui-sans-serif,-apple-system,system-ui,"Segoe UI",Helvetica,"Apple Color Emoji",Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";font-size:16px;}#chatgpt-mermaid-\_r_op\_ p{margin:0;}#chatgpt-mermaid-\_r_op\_ .entityBox{fill:rgb(222, 234, 251);stroke:rgb(83, 154, 248);}#chatgpt-mermaid-\_r_op\_ .relationshipLabelBox{fill:rgb(243, 243, 243);opacity:0.7;background-color:rgb(243, 243, 243);}#chatgpt-mermaid-\_r_op\_ .relationshipLabelBox rect{opacity:0.5;}#chatgpt-mermaid-\_r_op\_ .labelBkg{background-color:rgba(243, 243, 243, 0.5);}#chatgpt-mermaid-\_r_op\_ .edgeLabel{background-color:rgb(252, 252, 252);}#chatgpt-mermaid-\_r_op\_ .edgeLabel .label rect{fill:rgb(252, 252, 252);}#chatgpt-mermaid-\_r_op\_ .edgeLabel .label text{fill:rgb(13, 13, 13);}#chatgpt-mermaid-\_r_op\_ .edgeLabel .label{fill:rgb(83, 154, 248);font-size:14px;}#chatgpt-mermaid-\_r_op\_ .label{font-family:-apple-system-body,ui-sans-serif,-apple-system,system-ui,"Segoe UI",Helvetica,"Apple Color Emoji",Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";color:rgb(13, 13, 13);}#chatgpt-mermaid-\_r_op\_ .edge-pattern-dashed{stroke-dasharray:8,8;}#chatgpt-mermaid-\_r_op\_ .node rect,#chatgpt-mermaid-\_r_op\_ .node circle,#chatgpt-mermaid-\_r_op\_ .node ellipse,#chatgpt-mermaid-\_r_op\_ .node polygon{fill:rgb(222, 234, 251);stroke:rgb(83, 154, 248);stroke-width:1px;}#chatgpt-mermaid-\_r_op\_ .relationshipLine{stroke:rgb(143, 143, 143);stroke-width:1px;fill:none;}#chatgpt-mermaid-\_r_op\_ .marker{fill:none!important;stroke:rgb(143, 143, 143)!important;stroke-width:1;}#chatgpt-mermaid-\_r_op\_ [data-look=neo].labelBkg{background-color:rgba(243, 243, 243, 0.5);}#chatgpt-mermaid-\_r_op\_ .node .neo-node{stroke:rgb(83, 154, 248);}#chatgpt-mermaid-\_r_op\_ [data-look="neo"].node rect,#chatgpt-mermaid-\_r_op\_ [data-look="neo"].cluster rect,#chatgpt-mermaid-\_r_op\_ [data-look="neo"].node polygon{stroke:url(#chatgpt-mermaid-\_r_op\_-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#chatgpt-mermaid-\_r_op\_ [data-look="neo"].swimlane.cluster rect{filter:none;}#chatgpt-mermaid-\_r_op\_ [data-look="neo"].node path{stroke:url(#chatgpt-mermaid-\_r_op\_-gradient);stroke-width:1px;}#chatgpt-mermaid-\_r_op\_ [data-look="neo"].node .outer-path{filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#chatgpt-mermaid-\_r_op\_ [data-look="neo"].node .neo-line path{stroke:rgb(83, 154, 248);filter:none;}#chatgpt-mermaid-\_r_op\_ [data-look="neo"].node circle{stroke:url(#chatgpt-mermaid-\_r_op\_-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#chatgpt-mermaid-\_r_op\_ [data-look="neo"].node circle .state-start{fill:#000000;}#chatgpt-mermaid-\_r_op\_ [data-look="neo"].icon-shape .icon{fill:url(#chatgpt-mermaid-\_r_op\_-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#chatgpt-mermaid-\_r_op\_ [data-look="neo"].icon-shape .icon-neo path{stroke:url(#chatgpt-mermaid-\_r_op\_-gradient);filter:drop-shadow( 1px 2px 2px rgba(185,185,185,1));}#chatgpt-mermaid-\_r_op\_ :root{--mermaid-font-family:-apple-system-body,ui-sans-serif,-apple-system,system-ui,"Segoe UI",Helvetica,"Apple Color Emoji",Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";}ROLESUSERSADDRESSESCARTSORDERSCATEGORIESPRODUCTSBRANDSPRODUCT_VARIANTSDARK_STORESSTORE_INVENTORYINVENTORY_TRANSACTIONSCART_ITEMSORDER_ITEMSORDER_STATUS_HISTORYSTOCK_RESERVATIONSPAYMENTSREFUNDSDELIVERY_PARTNERSDELIVERIESDELIVERY_STATUS_HISTORYassigned_toownscreatesplacescontainsmanufactureshasmaintainsstocked_asrecordsaffectscontainsselected_infulfillsdelivered_tocontainsordered_astracksreservesreserved_aspaid_byrefunded_byassignedfulfilled_bytracks
+
+Important relationship decisions:
+
+- A product can have multiple variants.
+- A product variant can be stocked at multiple stores.
+- A customer can have multiple addresses.
+- A customer can place multiple orders.
+- An order contains multiple order items.
+- An order can have multiple payment attempts, but only one successful payment should be accepted.
+- An order can have one delivery assignment at a time.
+- Every stock reservation is associated with an order and product variant.
+
+We'll also implement stock transfers between stores as an additional feature.
+
+## 3.2 Relational schema
+
+Let's define the actual tables.
+
+We'll use:
+
+- `BIGINT UNSIGNED AUTO_INCREMENT` for primary keys.
+- `DECIMAL(10,2)` for money.
+- `DATETIME` for timestamps.
+- `VARCHAR` for statuses with controlled values.
+- Foreign keys for referential integrity.
+- Unique constraints to prevent duplicate records.
+
+### Domain A — Identity and customers
+
+1\. roles
+
+| Column    | Type        | Constraint       |
+| --------- | ----------- | ---------------- |
+| role_id   | BIGINT      | PK               |
+| role_name | VARCHAR(30) | UNIQUE, NOT NULL |
+
+Example values: CUSTOMER, ADMIN, STORE_MANAGER, DELIVERY_PARTNER.
+
+2\. users
+
+| Column         | Type         | Constraint |
+| -------------- | ------------ | ---------- |
+| user_id        | BIGINT       | PK         |
+| role_id        | BIGINT       | FK → roles |
+| full_name      | VARCHAR(100) | NOT NULL   |
+| email          | VARCHAR(150) | UNIQUE     |
+| phone          | VARCHAR(15)  | UNIQUE     |
+| password_hash  | VARCHAR(255) | NOT NULL   |
+| account_status | VARCHAR(20)  | NOT NULL   |
+| created_at     | DATETIME     | NOT NULL   |
+
+3\. addresses
+
+| Column       | Type          | Constraint    |
+| ------------ | ------------- | ------------- |
+| address_id   | BIGINT        | PK            |
+| user_id      | BIGINT        | FK → users    |
+| address_line | VARCHAR(255)  | NOT NULL      |
+| area         | VARCHAR(100)  | NOT NULL      |
+| city         | VARCHAR(100)  | NOT NULL      |
+| pincode      | VARCHAR(10)   | NOT NULL      |
+| latitude     | DECIMAL(10,7) | NULL          |
+| longitude    | DECIMAL(10,7) | NULL          |
+| is_default   | BOOLEAN       | DEFAULT FALSE |
+
+### Domain B — Product catalogue
+
+4\. categories
+
+| Column             | Type         | Constraint            |
+| ------------------ | ------------ | --------------------- |
+| category_id        | BIGINT       | PK                    |
+| parent_category_id | BIGINT       | FK → categories, NULL |
+| category_name      | VARCHAR(100) | NOT NULL              |
+| description        | TEXT         | NULL                  |
+
+The parent category allows hierarchical categorization.
+
+Example:
+
+```
+Groceries
+  ├── Dairy
+  │    ├── Milk
+  │    └── Cheese
+  ├── Fruits
+  └── Vegetables
+```
+
+5\. brands
+
+| Column      | Type         | Constraint |
+| ----------- | ------------ | ---------- |
+| brand_id    | BIGINT       | PK         |
+| brand_name  | VARCHAR(100) | UNIQUE     |
+| description | TEXT         | NULL       |
+
+6\. products
+
+| Column       | Type         | Constraint      |
+| ------------ | ------------ | --------------- |
+| product_id   | BIGINT       | PK              |
+| category_id  | BIGINT       | FK → categories |
+| brand_id     | BIGINT       | FK → brands     |
+| product_name | VARCHAR(150) | NOT NULL        |
+| description  | TEXT         | NULL            |
+| image_url    | VARCHAR(500) | NULL            |
+| is_active    | BOOLEAN      | DEFAULT TRUE    |
+
+7\. product_variants
+
+| Column       | Type          | Constraint    |
+| ------------ | ------------- | ------------- |
+| variant_id   | BIGINT        | PK            |
+| product_id   | BIGINT        | FK → products |
+| sku          | VARCHAR(50)   | UNIQUE        |
+| variant_name | VARCHAR(100)  | NOT NULL      |
+| unit         | VARCHAR(30)   | NOT NULL      |
+| price        | DECIMAL(10,2) | NOT NULL      |
+| is_active    | BOOLEAN       | DEFAULT TRUE  |
+
+Example: Amul Milk → 500 ml, 1 litre, 2 litres.
+
+### Domain C — Dark stores and inventory
+
+8\. dark_stores
+
+| Column            | Type          | Constraint   |
+| ----------------- | ------------- | ------------ |
+| store_id          | BIGINT        | PK           |
+| store_name        | VARCHAR(100)  | NOT NULL     |
+| address           | VARCHAR(255)  | NOT NULL     |
+| area              | VARCHAR(100)  | NOT NULL     |
+| latitude          | DECIMAL(10,7) | NOT NULL     |
+| longitude         | DECIMAL(10,7) | NOT NULL     |
+| service_radius_km | DECIMAL(5,2)  | NOT NULL     |
+| is_active         | BOOLEAN       | DEFAULT TRUE |
+
+9\. store_inventory
+
+| Column            | Type     | Constraint            |
+| ----------------- | -------- | --------------------- |
+| inventory_id      | BIGINT   | PK                    |
+| store_id          | BIGINT   | FK → dark_stores      |
+| variant_id        | BIGINT   | FK → product_variants |
+| total_quantity    | INT      | NOT NULL              |
+| reserved_quantity | INT      | DEFAULT 0             |
+| reorder_level     | INT      | DEFAULT 10            |
+| updated_at        | DATETIME | NOT NULL              |
+
+Unique constraint: `(store_id, variant_id)`.
+
+Available quantity is calculated as:
+
+\\[ Q\_{available}=Q\_{total}-Q\_{reserved} \\]
+
+10\. inventory_transactions
+
+| Column            | Type        | Constraint           |
+| ----------------- | ----------- | -------------------- |
+| transaction_id    | BIGINT      | PK                   |
+| inventory_id      | BIGINT      | FK → store_inventory |
+| transaction_type  | VARCHAR(30) | NOT NULL             |
+| quantity_change   | INT         | NOT NULL             |
+| previous_quantity | INT         | NOT NULL             |
+| new_quantity      | INT         | NOT NULL             |
+| reference_id      | BIGINT      | NULL                 |
+| created_at        | DATETIME    | NOT NULL             |
+
+Tracks stock additions, reductions, transfers and adjustments.
+
+### Domain D — Shopping cart and orders
+
+11\. carts
+
+| Column      | Type        | Constraint       |
+| ----------- | ----------- | ---------------- |
+| cart_id     | BIGINT      | PK               |
+| user_id     | BIGINT      | FK → users       |
+| store_id    | BIGINT      | FK → dark_stores |
+| cart_status | VARCHAR(20) | NOT NULL         |
+| created_at  | DATETIME    | NOT NULL         |
+
+12\. cart_items
+
+| Column       | Type   | Constraint            |
+| ------------ | ------ | --------------------- |
+| cart_item_id | BIGINT | PK                    |
+| cart_id      | BIGINT | FK → carts            |
+| variant_id   | BIGINT | FK → product_variants |
+| quantity     | INT    | NOT NULL              |
+
+Unique constraint: `(cart_id, variant_id)`.
+
+13\. orders
+
+| Column       | Type          | Constraint       |
+| ------------ | ------------- | ---------------- |
+| order_id     | BIGINT        | PK               |
+| user_id      | BIGINT        | FK → users       |
+| store_id     | BIGINT        | FK → dark_stores |
+| address_id   | BIGINT        | FK → addresses   |
+| order_number | VARCHAR(40)   | UNIQUE           |
+| subtotal     | DECIMAL(10,2) | NOT NULL         |
+| delivery_fee | DECIMAL(10,2) | DEFAULT 0        |
+| discount     | DECIMAL(10,2) | DEFAULT 0        |
+| total_amount | DECIMAL(10,2) | NOT NULL         |
+| order_status | VARCHAR(30)   | NOT NULL         |
+| created_at   | DATETIME      | NOT NULL         |
+
+14\. order_items
+
+| Column                | Type          | Constraint            |
+| --------------------- | ------------- | --------------------- |
+| order_item_id         | BIGINT        | PK                    |
+| order_id              | BIGINT        | FK → orders           |
+| variant_id            | BIGINT        | FK → product_variants |
+| product_name_snapshot | VARCHAR(150)  | NOT NULL              |
+| quantity              | INT           | NOT NULL              |
+| unit_price            | DECIMAL(10,2) | NOT NULL              |
+| subtotal              | DECIMAL(10,2) | NOT NULL              |
+
+Historical prices and product names are retained even if the catalogue changes.
+
+15\. order_status_history
+
+| Column          | Type        | Constraint  |
+| --------------- | ----------- | ----------- |
+| history_id      | BIGINT      | PK          |
+| order_id        | BIGINT      | FK → orders |
+| previous_status | VARCHAR(30) | NULL        |
+| new_status      | VARCHAR(30) | NOT NULL    |
+| changed_at      | DATETIME    | NOT NULL    |
+| remarks         | TEXT        | NULL        |
+
+### Domain E — Stock reservations
+
+16\. stock_reservations
+
+| Column             | Type        | Constraint            |
+| ------------------ | ----------- | --------------------- |
+| reservation_id     | BIGINT      | PK                    |
+| order_id           | BIGINT      | FK → orders           |
+| variant_id         | BIGINT      | FK → product_variants |
+| store_id           | BIGINT      | FK → dark_stores      |
+| quantity           | INT         | NOT NULL              |
+| reservation_status | VARCHAR(20) | NOT NULL              |
+| expires_at         | DATETIME    | NOT NULL              |
+| created_at         | DATETIME    | NOT NULL              |
+
+This table is important for handling stock held temporarily during checkout.
+
+A reservation can be:
+
+- ACTIVE
+- CONFIRMED
+- RELEASED
+- EXPIRED
+
+### Domain F — Payments and refunds
+
+17\. payments
+
+| Column                | Type          | Constraint  |
+| --------------------- | ------------- | ----------- |
+| payment_id            | BIGINT        | PK          |
+| order_id              | BIGINT        | FK → orders |
+| transaction_reference | VARCHAR(100)  | UNIQUE      |
+| payment_method        | VARCHAR(30)   | NOT NULL    |
+| amount                | DECIMAL(10,2) | NOT NULL    |
+| payment_status        | VARCHAR(20)   | NOT NULL    |
+| paid_at               | DATETIME      | NULL        |
+
+18\. refunds
+
+| Column        | Type          | Constraint    |
+| ------------- | ------------- | ------------- |
+| refund_id     | BIGINT        | PK            |
+| payment_id    | BIGINT        | FK → payments |
+| refund_amount | DECIMAL(10,2) | NOT NULL      |
+| refund_reason | TEXT          | NULL          |
+| refund_status | VARCHAR(20)   | NOT NULL      |
+| created_at    | DATETIME      | NOT NULL      |
+
+### Domain G — Delivery management
+
+19\. delivery_partners
+
+| Column              | Type        | Constraint         |
+| ------------------- | ----------- | ------------------ |
+| partner_id          | BIGINT      | PK                 |
+| user_id             | BIGINT      | FK → users, UNIQUE |
+| vehicle_type        | VARCHAR(30) | NOT NULL           |
+| vehicle_number      | VARCHAR(30) | NULL               |
+| availability_status | VARCHAR(20) | NOT NULL           |
+
+20\. deliveries
+
+| Column          | Type        | Constraint             |
+| --------------- | ----------- | ---------------------- |
+| delivery_id     | BIGINT      | PK                     |
+| order_id        | BIGINT      | FK → orders, UNIQUE    |
+| partner_id      | BIGINT      | FK → delivery_partners |
+| assigned_at     | DATETIME    | NULL                   |
+| picked_up_at    | DATETIME    | NULL                   |
+| delivered_at    | DATETIME    | NULL                   |
+| delivery_status | VARCHAR(30) | NOT NULL               |
+
+21\. delivery_status_history
+
+| Column      | Type        | Constraint      |
+| ----------- | ----------- | --------------- |
+| history_id  | BIGINT      | PK              |
+| delivery_id | BIGINT      | FK → deliveries |
+| status      | VARCHAR(30) | NOT NULL        |
+| updated_at  | DATETIME    | NOT NULL        |
+| remarks     | TEXT        | NULL            |
+
+### Domain H — Store stock transfers
+
+22\. stock_transfers
+
+| Column               | Type        | Constraint       |
+| -------------------- | ----------- | ---------------- |
+| transfer_id          | BIGINT      | PK               |
+| source_store_id      | BIGINT      | FK → dark_stores |
+| destination_store_id | BIGINT      | FK → dark_stores |
+| transfer_status      | VARCHAR(20) | NOT NULL         |
+| created_at           | DATETIME    | NOT NULL         |
+| completed_at         | DATETIME    | NULL             |
+
+23\. stock_transfer_items
+
+| Column           | Type   | Constraint            |
+| ---------------- | ------ | --------------------- |
+| transfer_item_id | BIGINT | PK                    |
+| transfer_id      | BIGINT | FK → stock_transfers  |
+| variant_id       | BIGINT | FK → product_variants |
+| quantity         | INT    | NOT NULL              |
+
+This brings our core schema to 23 tables.
+
+# 4. Normalization strategy
+
+We will target Third Normal Form (3NF) for the database.
+
+| Normal form | How we apply it                                                  |
+| ----------- | ---------------------------------------------------------------- |
+| 1NF         | Each column contains atomic values; no repeating product columns |
+| 2NF         | Every non-key attribute depends on the complete candidate key    |
+| 3NF         | No transitive dependencies between non-key attributes            |
+
+A few design decisions worth noting:
+
+- Product details are separated from variants.
+- Categories and brands are independent entities.
+- Store inventory is separated from the product catalogue.
+- Order items are separated from orders.
+- Payments and refunds have independent records.
+- Delivery history is separated from the current delivery status.
+
+We intentionally retain product name and price snapshots in `order_items`. This is historical transaction data, not an accidental normalization violation.
+
+# 5. Advanced DBMS features to implement
+
+These are the features that will distinguish the project academically.
+
+| DBMS concept             | Implementation                         |
+| ------------------------ | -------------------------------------- |
+| Primary and foreign keys | All relational entities                |
+| Constraints              | NOT NULL, UNIQUE, CHECK                |
+| Normalization            | 1NF, 2NF, 3NF                          |
+| Joins                    | Product, inventory, order reports      |
+| Subqueries               | Customer and sales analysis            |
+| Views                    | Sales, stock and delivery reports      |
+| Stored procedures        | Checkout, cancellation, stock transfer |
+| Functions                | Calculate order total, available stock |
+| Triggers                 | Inventory audit, order history         |
+| Transactions             | Checkout and stock reservation         |
+| Concurrency              | Simultaneous purchase testing          |
+| Indexing                 | Order, inventory and product searches  |
+| Query optimization       | EXPLAIN ANALYZE                        |
+
+### Suggested stored procedures
+
+1. `sp_place_order`
+2. `sp_cancel_order`
+3. `sp_add_inventory`
+4. `sp_transfer_inventory`
+5. `sp_assign_delivery`
+6. `sp_release_expired_reservations`
+
+### Suggested triggers
+
+1. `trg_inventory_audit` — logs inventory modifications.
+2. `trg_order_status_history` — maintains order status history.
+3. `trg_delivery_status_history` — records delivery updates.
+4. `trg_validate_order_item` — validates order item quantities and prices.
+
+For audit triggers, we should avoid relying on them for all business logic. The application and stored procedures will control the transaction, while triggers record relevant changes.
+
+### Suggested views
+
+- `vw_available_products`
+- `vw_low_stock`
+- `vw_daily_store_sales`
+- `vw_customer_order_history`
+- `vw_delivery_performance`
+
+# 6. Backend API structure
+
+We'll organize Express routes by domain rather than putting everything into one file.
+
+```
+backend/
+│
+├── src/
+│   ├── config/
+│   │   └── database.js
+│   │
+│   ├── middleware/
+│   │   ├── auth.js
+│   │   └── roleGuard.js
+│   │
+│   ├── modules/
+│   │   ├── auth/
+│   │   ├── users/
+│   │   ├── products/
+│   │   ├── stores/
+│   │   ├── inventory/
+│   │   ├── cart/
+│   │   ├── orders/
+│   │   ├── payments/
+│   │   └── delivery/
+│   │
+│   ├── routes/
+│   ├── utils/
+│   └── server.js
+│
+└── package.json
+```
+
+### Main API endpoints
+
+| Method | Endpoint                     | Function           |
+| ------ | ---------------------------- | ------------------ |
+| POST   | `/api/auth/register`         | Register user      |
+| POST   | `/api/auth/login`            | Login              |
+| GET    | `/api/products`              | Browse products    |
+| GET    | `/api/stores/nearby`         | Find nearby stores |
+| GET    | `/api/inventory/:storeId`    | Check inventory    |
+| POST   | `/api/cart/items`            | Add cart item      |
+| GET    | `/api/cart`                  | View cart          |
+| POST   | `/api/orders`                | Place order        |
+| GET    | `/api/orders/:id`            | Get order details  |
+| PATCH  | `/api/orders/:id/cancel`     | Cancel order       |
+| POST   | `/api/payments`              | Simulate payment   |
+| PATCH  | `/api/deliveries/:id/status` | Update delivery    |
+| POST   | `/api/inventory/transfer`    | Transfer stock     |
+
+The most important rule: critical operations such as checkout and inventory transfers should execute as database transactions, not as a sequence of unrelated API queries.
+
+# 7. Frontend structure
+
+```
+frontend/
+│
+├── src/
+│   ├── components/
+│   ├── layouts/
+│   │   ├── CustomerLayout.jsx
+│   │   ├── AdminLayout.jsx
+│   │   └── DeliveryLayout.jsx
+│   │
+│   ├── pages/
+│   │   ├── customer/
+│   │   ├── admin/
+│   │   └── delivery/
+│   │
+│   ├── services/
+│   │   └── api.js
+│   │
+│   ├── context/
+│   ├── hooks/
+│   └── App.jsx
+│
+└── package.json
+```
+
+I'd give the customer interface a clean grocery-shopping design, while the admin interface should focus on tables, stock information and analytics.
+
+# 8. Complete implementation roadmap
+
+This is the order in which I suggest we develop the project.
+
+## Development milestones
+
+1. Phase 1 — Database foundation
+
+   Starting here
+   - Create MySQL database.
+   - Create all 23 tables.
+   - Define PKs, FKs and constraints.
+   - Validate normalization.
+   - Populate sample data.
+2. Phase 2 — DBMS implementation
+   - Stored procedures.
+   - Triggers.
+   - Functions.
+   - Views.
+   - Transactions.
+   - Indexing and optimization.
+3. Phase 3 — Backend development
+   - Express server.
+   - MySQL connection pool.
+   - Authentication.
+   - REST APIs.
+   - Business logic.
+4. Phase 4 — Frontend development
+   - Customer shopping interface.
+   - Admin dashboard.
+   - Delivery dashboard.
+   - Cart and checkout.
+   - Order tracking.
+5. Phase 5 — Advanced testing
+   - Concurrent order testing.
+   - Inventory consistency.
+   - Payment failure handling.
+   - SQL query performance.
+   - Referential integrity testing.
+6. Phase 6 — Documentation
+   - ER diagram.
+   - Relational schema.
+   - Data dictionary.
+   - Normalization explanation.
+   - SQL query outputs.
+   - Screenshots and test cases.
+
+# 9. Initial project directory
+
+This is how I'd organize the complete repository:
+
+```
+QuickKart/
+│
+├── database/
+│   ├── 01_create_database.sql
+│   ├── 02_create_tables.sql
+│   ├── 03_constraints_indexes.sql
+│   ├── 04_sample_data.sql
+│   ├── 05_views.sql
+│   ├── 06_functions.sql
+│   ├── 07_procedures.sql
+│   ├── 08_triggers.sql
+│   └── 09_test_queries.sql
+│
+├── backend/
+│
+├── frontend/
+│
+├── documentation/
+│   ├── ER_Diagram
+│   ├── Relational_Schema
+│   ├── Normalization
+│   └── Project_Report
+│
+└── README.md
+```
+
+## 10. Important implementation decisions
+
+Before writing the SQL, let's establish a few rules:
+
+1. One MySQL database: `quickkart_db`.
+2. One primary relational database: No premature sharding or microservices.
+3. Store-specific inventory: Never maintain stock directly in the products table.
+4. Transaction-safe checkout: Inventory reservation and order creation must be atomic.
+5. No real payment processing: Simulate payment success, failure and refunds.
+6. No real-time GPS requirement: Delivery status updates are sufficient for the initial version.
+7. Use seeded data: Multiple Chennai dark stores, customers, delivery partners and grocery products.
+
+For inventory, we'll enforce:
+
+\\[ 0 \leq ReservedQuantity \leq TotalQuantity \\]
+
+For checkout, we will use InnoDB transactions, `SELECT ... FOR UPDATE`, and rollback on failure.
+
+One more detail: when an order is placed, we should save a snapshot of its delivery address as well, so changing a customer's saved address later doesn't alter an old order.
+
+# 11. What we do next
+
+
+
+Next task
+
+&#x20;Phase 1 — Build the actual MySQL database
+
+
+
+I suggest we do this in small, verifiable steps rather than generating 23 tables and hoping everything works.
+
+Our first implementation should include:
+
+1. Database creation.
+2. Roles and users.
+3. Addresses.
+4. Categories and brands.
+5. Products and product variants.
+6. Dark stores.
+7. Inventory.
+
+Then we'll verify the relationships and continue with carts, orders, payments and deliveries.
+
+The immediate next deliverable should be `01_create_database.sql` and `02_create_tables.sql`, with complete MySQL 8-compatible DDL, constraints, foreign keys and indexes.
+
+That gives us a real database to build and test against before touching the React frontend.

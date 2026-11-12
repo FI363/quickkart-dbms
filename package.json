@@ -1,0 +1,41 @@
+{
+  "name": "quickkart-dbms",
+  "version": "1.0.0",
+  "description": "QuickKart — Quick-Commerce Management System (Advanced DBMS Project)",
+  "main": "backend/src/server.js",
+  "scripts": {
+    "sql": "node query.js",
+    "sql:repl": "node query.js --repl",
+    "norm": "node show-norm.js",
+    "norm:1": "node show-norm.js 1",
+    "norm:2": "node show-norm.js 2",
+    "norm:3": "node show-norm.js 3",
+    "norm:bcnf": "node show-norm.js bcnf",
+    "norm:4": "node show-norm.js 4",
+    "dba": "node dba.js",
+    "dba:customer": "node dba.js customer",
+    "dba:product": "node dba.js product",
+    "dba:order": "node dba.js order",
+    "dba:payment": "node dba.js payment",
+    "dba:delivery": "node dba.js delivery",
+    "dba:sales": "node dba.js sales",
+    "dba:stock": "node dba.js stock",
+    "dba:tables": "node dba.js tables",
+    "dba:routines": "node dba.js routines",
+    "db:setup": "node database/run_migration.js",
+    "db:phase1": "node database/run_migration.js --phase=1",
+    "db:phase2": "node database/run_migration.js --phase=2",
+    "dev:backend": "npm --prefix backend start",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "build:frontend": "npm --prefix frontend run build"
+  },
+  "keywords": [
+    "dbms",
+    "mysql",
+    "quick-commerce",
+    "relational-database",
+    "3nf"
+  ],
+  "author": "Farhaan",
+  "license": "ISC"
+}
